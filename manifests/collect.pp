@@ -31,7 +31,8 @@ class icinga::collect {
   if $::icinga::client {
     @@nagios_host { $::icinga::collect_hostname:
       ensure             => present,
-      address            => $::icinga::collect_ipaddress,
+      alias              => $::icinga::collect_hostname,
+      address            => $ipaddress,
       max_check_attempts => $::icinga::max_check_attempts,
       check_command      => 'check-host-alive',
       use                => 'linux-server',

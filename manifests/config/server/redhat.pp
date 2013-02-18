@@ -103,6 +103,10 @@ class icinga::config::server::redhat {
         ensure  => present,
         content => template('icinga/redhat/generic-service.cfg');
 
+      "${::icinga::targetdir}/generic-contact.cfg":
+        ensure  => present,
+        content => template('icinga/redhat/generic-contact.cfg.erb');
+
       "${::icinga::confdir_server}/icinga.cfg":
         ensure  => present,
         content => template('icinga/redhat/icinga.cfg.erb');
