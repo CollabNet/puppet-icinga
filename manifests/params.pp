@@ -21,6 +21,8 @@ class icinga::params {
   $notification_service_opts   = 'w,u,c,r'
   $max_check_attempts          = '4'
   $parents                     = undef
+  $hostgroups                  = 'default'
+  $notifications_enabled       = '1'
 
   case $::operatingsystem {
     'Debian', 'Ubuntu': {

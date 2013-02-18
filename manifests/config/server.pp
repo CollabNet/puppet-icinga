@@ -4,6 +4,9 @@
 #
 class icinga::config::server {
   if $::icinga::server {
+
+    include ::icinga::config::server::common
+
     case $::operatingsystem {
       'Debian', 'Ubuntu': {
         include icinga::config::server::debian
@@ -43,5 +46,8 @@ class icinga::config::server {
     }
 
     realize Group[$::icinga::server_cmd_group]
+
+    include ::icinga::default::hostgroups
+    include ::icinga::default::timeperiods
   }
 }

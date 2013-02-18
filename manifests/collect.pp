@@ -13,48 +13,49 @@ class icinga::collect {
     Nagios_contactgroup <<| |>>      { notify => Service[$::icinga::service_server] }
     Nagios_hostdependency <<| |>>    { notify => Service[$::icinga::service_server] }
     Nagios_hostescalation <<| |>>    { notify => Service[$::icinga::service_server] }
-    Nagios_hostgroup <<| |>>         { notify => Service[$::icinga::service_server] }
+    Nagios_hostgroup <<| |>>         {
+      notify => Service[$::icinga::service_server],
+      target => "${::icinga::targetdir}/hostgroups.cfg",
+    }
     Nagios_servicedependency <<| |>> { notify => Service[$::icinga::service_server] }
     Nagios_serviceescalation <<| |>> { notify => Service[$::icinga::service_server] }
     Nagios_serviceextinfo <<| |>>    { notify => Service[$::icinga::service_server] }
     Nagios_servicegroup <<| |>>      { notify => Service[$::icinga::service_server] }
-    Nagios_timeperiod <<| |>>        { notify => Service[$::icinga::service_server] }
-  }
-
-  Nagios_service {
-    host_name           => $::icinga::collect_hostname,
-    use                 => 'generic-service',
-    notification_period => $::icinga::notification_period,
-    target              => "${::icinga::targetdir}/services/${::fqdn}.cfg",
+    Nagios_timeperiod <<| |>>        {
+      notify => Service[$::icinga::service_server],
+      target => "${::icinga::targetdir}/timeperiods.cfg",
+    }
   }
 
   if $::icinga::client {
-    @@nagios_host { $::icinga::collect_hostname:
-      ensure             => present,
+    @@nagios_host{$::icinga::collect_hostname:
+      ensure                => present,
+      address               => $::icinga::collect_ipaddress,
       alias              => $::icinga::collect_hostname,
-      address            => $ipaddress,
-      max_check_attempts => $::icinga::max_check_attempts,
-      check_command      => 'check-host-alive',
-      use                => 'linux-server',
-      parents            => $::icinga::parents,
-      hostgroups         => 'linux-servers',
-      action_url         => '/pnp4nagios/graph?host=$HOSTNAME$',
-      target             => "${::icinga::targetdir}/hosts/host-${::fqdn}.cfg",
+      max_check_attempts    => $::icinga::max_check_attempts,
+      check_command         => 'check-host-alive',
+      use                   => 'linux-server',
+      parents               => $::icinga::parents,
+      hostgroups            => $::icinga::hostgroups,
+      action_url            => '/pnp4nagios/graph?host=$HOSTNAME$',
+      notification_period   => $::icinga::notification_period,
+      notifications_enabled => $::icinga::notifications_enabled,
+      icon_image_alt        => $::operatingsystem,
+      icon_image            => "os/${::operatingsystem}.png",
+      statusmap_image       => "os/${::operatingsystem}.png",
+      target                => "${::icinga::targetdir}/hosts/host-${::fqdn}.cfg",
     }
 
-    @@nagios_hostextinfo { $::icinga::collect_hostname:
-      ensure          => present,
-      icon_image_alt  => $::operatingsystem,
-      icon_image      => "os/${::operatingsystem}.png",
-      statusmap_image => "os/${::operatingsystem}.png",
-      target          => "${::icinga::targetdir}/hosts/hostextinfo-${::fqdn}.cfg",
+    @@nagios_service{"check_ping_${::fqdn}":
+      host_name             => $::icinga::collect_hostname,
+      use                   => 'generic-service',
+      check_command         => 'check_ping!100.0,20%!500.0,60%',
+      service_description   => 'Ping',
+      notification_period   => $::icinga::notification_period,
+      notifications_enabled => $::icinga::notifications_enabled,
+      action_url            => '/pnp4nagios/graph?host=$HOSTNAME$&srv=$SERVICEDESC$',
+      target                => "${::icinga::targetdir}/services/${::fqdn}.cfg",
     }
 
-    @@nagios_service { "check_ping_${::fqdn}":
-      check_command       => 'check_ping!100.0,20%!500.0,60%',
-      service_description => 'Ping',
-      action_url          => '/pnp4nagios/graph?host=$HOSTNAME$&srv=$SERVICEDESC$',
-    }
   }
 }
-

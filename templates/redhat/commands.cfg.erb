@@ -81,14 +81,6 @@ define command{
         command_line    $USER1$/check_disk -w $ARG1$ -c $ARG2$ -p $ARG3$
         }
 
-
-# 'check_local_load' command definition
-define command{
-        command_name    check_local_load
-        command_line    $USER1$/check_load -w $ARG1$ -c $ARG2$
-        }
-
-
 # 'check_local_procs' command definition
 define command{
         command_name    check_local_procs
@@ -101,14 +93,6 @@ define command{
         command_name    check_local_users
         command_line    $USER1$/check_users -w $ARG1$ -c $ARG2$
         }
-
-
-# 'check_local_swap' command definition
-define command{
-  command_name  check_local_swap
-  command_line  $USER1$/check_swap -w $ARG1$ -c $ARG2$
-}
-
 
 # 'check_local_mrtgtraf' command definition
 define command{
@@ -225,13 +209,6 @@ define command{
         command_name    check_dummy
         command_line    $USER1$/check_dummy $ARG1$
         }
-
-# 'check_all_disks' command definition
-define command{
-  command_name    check_all_disks
-  command_line    $USER1$/check_disk -w '$ARG1$' -c '$ARG2$' -e
-}
-
 
 ################################################################################
 #
