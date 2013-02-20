@@ -28,7 +28,6 @@ class icinga::collect {
   }
 
   if $::icinga::client {
-<<<<<<< HEAD
     @@nagios_host{$::icinga::collect_hostname:
       ensure                => present,
       address               => $::icinga::collect_ipaddress,
@@ -45,19 +44,6 @@ class icinga::collect {
       icon_image            => "os/${::operatingsystem}.png",
       statusmap_image       => "os/${::operatingsystem}.png",
       target                => "${::icinga::targetdir}/hosts/host-${::fqdn}.cfg",
-=======
-    @@nagios_host { $::icinga::collect_hostname:
-      ensure             => present,
-      alias              => $::icinga::collect_hostname,
-      address            => $ipaddress,
-      max_check_attempts => $::icinga::max_check_attempts,
-      check_command      => 'check-host-alive',
-      use                => 'linux-server',
-      parents            => $::icinga::parents,
-      hostgroups         => 'linux-servers',
-      action_url         => '/pnp4nagios/graph?host=$HOSTNAME$',
-      target             => "${::icinga::targetdir}/hosts/host-${::fqdn}.cfg",
->>>>>>> 6a13aace5dc9a3fda89ff341594d0aafbf3a9ad3
     }
 
     @@nagios_service{"check_ping_${::fqdn}":
