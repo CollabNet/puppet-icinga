@@ -56,6 +56,10 @@ class icinga::config::server::redhat {
     content => template('icinga/redhat/templates.cfg.erb'),
   }
 
+  file{"${::icinga::targetdir}/generic-contact.cfg":
+    content => template('icinga/redhat/generic-contact.cfg.erb'),
+  }
+
   file{"${::icinga::confdir_server}/cgi.cfg":
     content => template('icinga/redhat/cgi.cfg.erb'),
   }
