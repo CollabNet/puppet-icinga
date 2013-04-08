@@ -21,7 +21,7 @@ class icinga::preinstall {
       'nagios_servicegroup',
       'nagios_timeperiod'
     ]:
-    purge => true;
+      purge => true;
   }
 
   if $icinga::manage_repo {
