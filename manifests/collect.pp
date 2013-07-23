@@ -25,6 +25,7 @@ class icinga::collect {
       notify => Service[$::icinga::service_server],
       target => "${::icinga::targetdir}/timeperiods.cfg",
     }
+    Icinga::Downtime <<| |>> {  }
   }
 
   if $::icinga::client {
@@ -45,17 +46,5 @@ class icinga::collect {
       statusmap_image       => "os/${::operatingsystem}.png",
       target                => "${::icinga::targetdir}/hosts/host-${::fqdn}.cfg",
     }
-
-    @@nagios_service{"check_ping_${::fqdn}":
-      host_name             => $::icinga::collect_hostname,
-      use                   => 'generic-service',
-      check_command         => 'check_ping!100.0,20%!500.0,60%',
-      service_description   => 'Ping',
-      notification_period   => $::icinga::notification_period,
-      notifications_enabled => $::icinga::notifications_enabled,
-      action_url            => '/pnp4nagios/graph?host=$HOSTNAME$&srv=$SERVICEDESC$',
-      target                => "${::icinga::targetdir}/services/${::fqdn}.cfg",
-    }
-
   }
 }

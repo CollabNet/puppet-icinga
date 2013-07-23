@@ -90,7 +90,7 @@ class icinga::params {
       $package_client_ensure     = 'present'
       $package_server_ensure     = 'present'
       $package_client            = [ 'nagios-nrpe', 'nagios-plugins', 'nagios-plugins-all' ]
-      $package_server            = [ 'icinga', 'icinga-api', 'icinga-doc', 'icinga-gui', 'nagios-plugins-nrpe' ]
+      $package_server            = [ 'icinga', 'icinga-api', 'icinga-doc', 'icinga-gui', 'nagios-plugins-nrpe', 'perl-Date-Calc' ]
       $service_client            = 'nrpe'
       $service_client_ensure     = 'running'
       $service_client_enable     = true
@@ -102,8 +102,8 @@ class icinga::params {
       $service_server_enable     = true
       $service_server_hasstatus  = true
       $service_server_hasrestart = true
-      $pidfile_client            = '/var/run/nrpe/nrpe.pid'
-      $pidfile_server            = ''
+      $pidfile_client            = '/var/run/nagios/nrpe.pid'
+      $pidfile_server            = '/var/run/icinga.pid'
       $confdir_client            = '/etc/nagios'
       $confdir_server            = '/etc/icinga'
       $vardir_client             = '/var/icinga'
