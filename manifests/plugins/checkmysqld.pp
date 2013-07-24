@@ -20,13 +20,17 @@ class icinga::plugins::checkmysqld (
     /Debian|Ubuntu/                       => 'libdbd-mysql-perl',
   }
 
-  package {
-    $pkg_perl_mysql_connecter:
+  if ! defined(Package[$pkg_perl_mysql_connecter]) {
+    package{$pkg_perl_mysql_connecter:
       ensure => $ensure;
+    }
+  }
 
-    $pkg_nagios_plugins_mysqld:
+  if ! defined(Package[$pkg_nagios_plugins_mysqld]) {
+    package{$pkg_nagios_plugins_mysqld:
       ensure => $ensure,
       notify => Service[$icinga::service_client];
+    }
   }
 
   @@nagios_service { "check_mysqld_performance_${::fqdn}":
