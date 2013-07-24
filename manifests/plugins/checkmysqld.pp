@@ -11,7 +11,7 @@ class icinga::plugins::checkmysqld (
 ) inherits icinga {
 
   $pkg_nagios_plugins_mysqld = $::operatingsystem ? {
-    /CentOS|RedHat|Scientific|OEL|Amazon/ => 'nagios-plugins-mysqld',
+    /CentOS|RedHat|Scientific|OEL|Amazon/ => 'nagios-plugins-mysql',
     /Debian|Ubuntu/                       => 'nagios-plugin-check-mysqld',
   }
 
