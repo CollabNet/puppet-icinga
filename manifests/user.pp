@@ -40,12 +40,12 @@ define icinga::user (
             unless  => "grep -iE '^${name}:' ${htpasswd}",
             cwd     => $::icinga::confdir_server,
           }
-          } else {
-            exec { "Add Icinga user hash ${name}":
-              command => "echo \"${name}:${hash}\" >> ${htpasswd}",
-              unless  => "grep -iE '^${name}:' ${htpasswd}",
-            }
+        } else {
+          exec { "Add Icinga user hash ${name}":
+            command => "echo \"${name}:${hash}\" >> ${htpasswd}",
+            unless  => "grep -iE '^${name}:' ${htpasswd}",
           }
+        }
       }
 
       absent: {

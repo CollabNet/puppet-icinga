@@ -3,6 +3,7 @@
 # This class provides resource collection.
 #
 class icinga::collect {
+
   if $::icinga::server {
     # Set defaults for collected resources.
     Nagios_host <<| |>>              { notify => Service[$::icinga::service_server] }
@@ -32,7 +33,6 @@ class icinga::collect {
     @@nagios_host{$::icinga::collect_hostname:
       ensure                => present,
       address               => $::icinga::collect_ipaddress,
-      alias                 => $::icinga::collect_hostname,
       max_check_attempts    => $::icinga::max_check_attempts,
       check_command         => 'check-host-alive',
       use                   => 'linux-server',
