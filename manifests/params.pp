@@ -149,5 +149,9 @@ class icinga::params {
 
     default: {}
   }
+
+  # Plugin Defaults
+  $checktotalprocs_warning_level  = 700
+  $checktotalprocs_critical_level = 2000
 }
 
