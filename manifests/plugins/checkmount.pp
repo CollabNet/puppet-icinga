@@ -1,7 +1,11 @@
 define icinga::plugins::checkmount (
-  $pkgname                = 'nagios-plugins-mount',
-  $mountpoint             = undef,
-  $type                   = undef,
+  $pkgname                = $::operatingsystem ? {
+    'centos' => 'nagios-plugins-mount',
+    'debian' => 'nagios-plugin-mount',
+  },
+  $mountpoint            = undef,
+  $type                  = undef,
+  $contact_groups        = $::environment,
   $max_check_attempts    = $::icinga::params::max_check_attempts,
   $notification_period   = $::icinga::notification_period,
   $notifications_enabled = $::icinga::notifications_enabled,
@@ -26,13 +30,14 @@ define icinga::plugins::checkmount (
     owner   => $::icinga::client_user,
     group   => $::icinga::client_group,
     notify  => Service[$::icinga::service_client],
-    content => "command[check_mount${sanitized_mount}]=${::icinga::plugindir}/check_mount.pl -m ${mountpoint}${type_option}\n",
+    content => "command[check_mount${sanitized_mount}]=cd ${::icinga::plugindir}/; ./check_mount.pl -m ${mountpoint}${type_option}\n",
   }
 
   @@nagios_service{"check_mount_${mountpoint}_${::fqdn}":
     check_command         => "check_nrpe_command!check_mount${sanitized_mount}",
     service_description   => "Mount ${mountpoint}",
     host_name             => $::fqdn,
+    contact_groups        => $contact_groups,
     max_check_attempts    => $max_check_attempts,
     notification_period   => $notification_period,
     notifications_enabled => $notifications_enabled,

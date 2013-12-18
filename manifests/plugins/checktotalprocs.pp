@@ -5,6 +5,7 @@
 class icinga::plugins::checktotalprocs (
   $check_warning         = '',
   $check_critical        = '',
+  $contact_groups        = $::environment,
   $notification_period   = $::icinga::notification_period,
   $notifications_enabled = $::icinga::notifications_enabled,
   $check_warning         = $::icinga::params::checktotalprocs_warning_level,
@@ -15,6 +16,7 @@ class icinga::plugins::checktotalprocs (
     @@nagios_service { "check_total_procs_${::fqdn}":
       check_command         => "check_nrpe_command_args!check_total_procs!${check_warning} ${check_critical}",
       service_description   => 'Total processes',
+      contact_groups        => $contact_groups,
       notification_period   => $notification_period,
       notifications_enabled => $notifications_enabled,
       target                => "${::icinga::targetdir}/services/${::fqdn}.cfg",
