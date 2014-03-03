@@ -4,7 +4,7 @@
 #
 class icinga::collect {
 
-  if $::icinga::server {
+  if $::icinga::server and $::icinga::collect_resources {
     # Set defaults for collected resources.
     Nagios_host <<| |>>              { notify => Service[$::icinga::service_server] }
     Nagios_service <<| |>>           { notify => Service[$::icinga::service_server] }
@@ -26,7 +26,7 @@ class icinga::collect {
       notify => Service[$::icinga::service_server],
       target => "${::icinga::targetdir}/timeperiods.cfg",
     }
-    Icinga::Downtime <<| |>> {  }
+    Icinga::Downtime <<| |>>         { notify => Service[$::icinga::service_server] }
   }
 
   if $::icinga::client {

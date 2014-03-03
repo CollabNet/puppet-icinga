@@ -247,9 +247,9 @@ event_broker_options=-1
 #broker_module=/somewhere/module1.o
 #broker_module=/somewhere/module2.o arg1 arg2=3 debug=0
 
-# Uncomment this to enable idomod.o
-#broker_module=/usr/bin/idomod.o config_file=/etc/icinga/idomod.cfg
+<%- if @use_ido -%>
 broker_module=/usr/lib64/icinga/idomod.so config_file=/etc/icinga/idomod.cfg
+<% end %>
 
 # LOG ROTATION METHOD
 # This is the log rotation method that Icinga should use to rotate
@@ -1175,7 +1175,7 @@ p1_file=<%= scope.lookupvar('icinga::usrlib') %>/icinga/p1.pl
 # has not been compiled with support for embedded Perl.
 # Values: 0 = disable interpreter, 1 = enable interpreter
 
-enable_embedded_perl=0
+enable_embedded_perl=1
 
 
 
@@ -1186,7 +1186,7 @@ enable_embedded_perl=0
 # the HTML documentation on the embedded Perl interpreter for more
 # information on how this option works.
 
-use_embedded_perl_implicitly=0
+use_embedded_perl_implicitly=1
 
 
 

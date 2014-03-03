@@ -6,6 +6,7 @@ class icinga::params {
   $manage_repo                 = false
   $client                      = true
   $server                      = false
+  $collect_resources           = true
   $use_auth                    = true
   $plugins                     = [ 'checkpuppet' ]
   $nrpe_allowed_hosts          = [ '127.0.0.1,', $::ipaddress ]
@@ -21,6 +22,7 @@ class icinga::params {
   $notification_service_enable = '1'
   $notification_service_opts   = 'w,u,c,r'
   $max_check_attempts          = '4'
+  $use_ido                     = false
   $parents                     = undef
   $hostgroups                  = 'default'
   $notifications_enabled       = '1'
