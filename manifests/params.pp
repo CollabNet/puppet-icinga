@@ -3,29 +3,42 @@
 # Full description of class icinga here.
 #
 class icinga::params {
-  $manage_repo                 = false
-  $client                      = true
-  $server                      = false
-  $collect_resources           = true
-  $use_auth                    = true
-  $plugins                     = [ 'checkpuppet' ]
-  $nrpe_allowed_hosts          = [ '127.0.0.1,', $::ipaddress ]
-  $nrpe_server_address         = $::ipaddress
-  $icinga_admins               = '*'
-  $collect_ipaddress           = $::ipaddress
-  $collect_hostname            = $::fqdn
-  $notification_cmd_host       = 'notify-host-by-email'
-  $notification_cmd_service    = 'notify-service-by-email'
-  $notification_period         = '24x7'
-  $notification_host_enable    = '1'
-  $notification_host_opts      = 'd,r'
-  $notification_service_enable = '1'
-  $notification_service_opts   = 'w,u,c,r'
-  $max_check_attempts          = '4'
-  $use_ido                     = false
-  $parents                     = undef
-  $hostgroups                  = 'default'
-  $notifications_enabled       = '1'
+  $manage_repo                               = false
+  $client                                    = true
+  $server                                    = false
+  $collect_resources                         = true
+  $use_auth                                  = true
+  $plugins                                   = [ 'checkpuppet' ]
+  $nrpe_allowed_hosts                        = [ '127.0.0.1,', $::ipaddress ]
+  $nrpe_command_timeout                      = '60'
+  $nrpe_connect_timeout                      = '10'
+  $nrpe_server_address                       = $::ipaddress
+  $nrpe_server_port                          = '5666'
+  $nrpe_allow_arguments                      = '0'
+  $nrpe_enable_debug                         = '0'
+  $icinga_admins                             = '*'
+  $collect_hostname                          = $::fqdn
+  $notification_cmd_host                     = 'notify-host-by-email'
+  $notification_cmd_service                  = 'notify-service-by-email'
+  $notification_period                       = '24x7'
+  $notification_host_enable                  = '1'
+  $notification_host_opts                    = 'd,r'
+  $notification_service_enable               = '1'
+  $notification_service_opts                 = 'w,u,c,r'
+  $notification_interval                     = '0'
+  $max_check_attempts                        = '4'
+  $use_ido                                   = false
+  $parents                                   = undef
+  $hostgroups                                = 'default'
+  $notifications_enabled                     = '1'
+  $export_resources                          = true
+  $logdir_client                             = '/var/log/nrpe'
+  $logdir_server                             = '/var/log/icinga'
+  $set_expire_ack_by_default                 = '0'
+  $service_perfdata_file                     = '/usr/local/pnp4nagios/var/service-perfdata'
+  $process_service_perfdata_file             = 'process-service-perfdata-file'
+  $service_perfdata_file_template            = 'DATATYPE::SERVICEPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tSERVICEDESC::$SERVICEDESC$\tSERVICEPERFDATA::$SERVICEPERFDATA$\tSERVICECHECKCOMMAND::$SERVICECHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tSERVICESTATE::$SERVICESTATE$\tSERVICESTATETYPE::$SERVICESTATETYPE'
+  $service_perfdata_file_processing_interval = '15'
 
   case $::operatingsystem {
     'Debian', 'Ubuntu': {
@@ -58,7 +71,6 @@ class icinga::params {
       $sharedir_server           = '/usr/share/icinga/htdocs'
       $includedir_client         = '/etc/nagios/nrpe.d'
       $usrlib                    = '/usr/lib'
-      $plugindir                 = "${usrlib}/nagios/plugins"
       $service_webserver         = 'apache2'
       $webserver_user            = 'www-data'
       $webserver_group           = 'www-data'
@@ -71,8 +83,7 @@ class icinga::params {
       $targetdir                 = "${confdir_server}/objects"
       $targetdir_contacts        = "${targetdir}/contacts/contacts.cfg"
       $icinga_vhost              = '/etc/icinga/apache2.conf'
-      $logdir_client             = '/var/log/nrpe'
-      $logdir_server             = '/var/log/icinga'
+      $mail_command              = '/usr/bin/mail'
 
       # Plugin: Icinga Web
       $icingaweb_pkg     = [ 'icinga-web', 'icinga-web-module-pnp' ]
@@ -92,6 +103,9 @@ class icinga::params {
       $idoutils_dbname  = 'icinga'
       $idoutils_dbuser  = 'icinga'
       $idoutils_dbpass  = 'icinga'
+
+      # Plugin: Report
+      $jasper_vhost              = '/etc/apache2/conf.d/jasperserver.conf'
     }
 
     'RedHat', 'CentOS', 'Scientific', 'OEL', 'Amazon': {
@@ -124,7 +138,6 @@ class icinga::params {
       $vardir_server             = '/var/icinga'
       $sharedir_server           = '/usr/share/icinga'
       $includedir_client         = '/etc/nrpe.d'
-      $plugindir                 = "${usrlib}/nagios/plugins"
       $service_webserver         = 'httpd'
       $webserver_user            = 'apache'
       $webserver_group           = 'apache'
@@ -137,34 +150,35 @@ class icinga::params {
       $targetdir                 = "${confdir_server}/objects"
       $targetdir_contacts        = "${targetdir}/contacts/contacts.cfg"
       $icinga_vhost              = '/etc/icinga/apache2.conf'
-      $logdir_client             = '/var/log/nrpe'
-      $logdir_server             = '/var/log/icinga'
+      $mail_command              = '/bin/mail'
 
       # Plugin: Icinga Web
-      $icingaweb_pkg     = [ 'icinga-web' ]
-      $icingaweb_pkg_dep = [ 'perl-Locale-PO', 'php-ldap', 'php-pear', 'php-xml', 'php-mysql' ]
-      $icingaweb_confdir = '/usr/share/icinga-web'
-      $icingaweb_bindir  = "${icingaweb_confdir}/bin:${::path}"
-      $icingaweb_logdir  = '/usr/share/icinga-web/log'
-      $icingaweb_dbname  = 'icinga_web'
-      $icingaweb_dbuser  = 'icinga_web'
-      $icingaweb_dbpass  = 'icinga_web'
-      $icingaweb_vhost   = '/etc/httpd/conf.d/icinga-web.conf'
+      $icingaweb_pkg             = [ 'icinga-web' ]
+      $icingaweb_pkg_dep         = [ 'perl-Locale-PO', 'php-ldap', 'php-pear', 'php-xml', 'php-mysql' ]
+      $icingaweb_confdir         = '/usr/share/icinga-web'
+      $icingaweb_bindir          = "${icingaweb_confdir}/bin:${::path}"
+      $icingaweb_logdir          = '/usr/share/icinga-web/log'
+      $icingaweb_dbname          = 'icinga_web'
+      $icingaweb_dbuser          = 'icinga_web'
+      $icingaweb_dbpass          = 'icinga_web'
+      $icingaweb_vhost           = '/etc/httpd/conf.d/icinga-web.conf'
 
       # Plugin: IDOUtils
-      $idoutils_pkg     = [ 'icinga-idoutils', 'libdbi', 'libdbi-devel', 'libdbi-drivers', 'libdbi-dbd-mysql' ]
-      $idoutils_confdir = '/etc/icinga/idoutils'
-      $idoutils_service = 'ido2db'
-      $idoutils_dbname  = 'icinga'
-      $idoutils_dbuser  = 'icinga'
-      $idoutils_dbpass  = 'icinga'
+      $idoutils_pkg              = [ 'icinga-idoutils', 'libdbi', 'libdbi-devel', 'libdbi-drivers', 'libdbi-dbd-mysql' ]
+      $idoutils_confdir          = '/etc/icinga/idoutils'
+      $idoutils_service          = 'ido2db'
+      $idoutils_dbname           = 'icinga'
+      $idoutils_dbuser           = 'icinga'
+      $idoutils_dbpass           = 'icinga'
+
+      # Plugin: Report
+      $jasper_vhost              = '/etc/httpd/conf.d/jasperserver.conf'
     }
 
     default: {}
   }
 
-  # Plugin Defaults
-  $checktotalprocs_warning_level  = 700
-  $checktotalprocs_critical_level = 2000
-}
+  # Needs to be down here since $usrlib is defined in the distro specific params
+  $plugindir                 = "${usrlib}/nagios/plugins"
 
+}

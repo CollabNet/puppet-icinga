@@ -29,13 +29,13 @@
 # 'notify-host-by-email' command definition
 define command{
   command_name  notify-host-by-email
-  command_line  /usr/bin/printf "%b" "***** Icinga *****\n\nNotification Type: $NOTIFICATIONTYPE$\nHost: $HOSTNAME$\nState: $HOSTSTATE$\nAddress: $HOSTADDRESS$\nInfo: $HOSTOUTPUT$\n\nDate/Time: $LONGDATETIME$\n" | /bin/mail -s "** $NOTIFICATIONTYPE$ Host Alert: $HOSTNAME$ is $HOSTSTATE$ **" $CONTACTEMAIL$
+  command_line  /usr/bin/printf "%b" "***** Icinga *****\n\nNotification Type: $NOTIFICATIONTYPE$\nHost: $HOSTNAME$\nState: $HOSTSTATE$\nAddress: $HOSTADDRESS$\nInfo: $HOSTOUTPUT$\n\nDate/Time: $LONGDATETIME$\n" | <%= @mail_command %> -s "** $NOTIFICATIONTYPE$ Host Alert: $HOSTNAME$ is $HOSTSTATE$ **" $CONTACTEMAIL$
 }
 
 # 'notify-service-by-email' command definition
 define command{
   command_name  notify-service-by-email
-  command_line  /usr/bin/printf "%b" "***** Icinga *****\n\nNotification Type: $NOTIFICATIONTYPE$\n\nService: $SERVICEDESC$\nHost: $HOSTALIAS$\nAddress: $HOSTADDRESS$\nState: $SERVICESTATE$\n\nDate/Time: $LONGDATETIME$\n\n$NOTIFICATIONTYPE$ message: $NOTIFICATIONCOMMENT$\nBy: $NOTIFICATIONAUTHORNAME$ aka $NOTIFICATIONAUTHORALIAS$\n\nAdditional Info:\n\n$SERVICEOUTPUT$\n" | /bin/mail -s "** $NOTIFICATIONTYPE$ Service Alert: $HOSTALIAS$/$SERVICEDESC$ is $SERVICESTATE$ **" $CONTACTEMAIL$
+  command_line  /usr/bin/printf "%b" "***** Icinga *****\n\nNotification Type: $NOTIFICATIONTYPE$\n\nService: $SERVICEDESC$\nHost: $HOSTALIAS$\nAddress: $HOSTADDRESS$\nState: $SERVICESTATE$\n\nDate/Time: $LONGDATETIME$\n\n$NOTIFICATIONTYPE$ message: $NOTIFICATIONCOMMENT$\nBy: $NOTIFICATIONAUTHORNAME$ aka $NOTIFICATIONAUTHORALIAS$\n\nAdditional Info:\n\n$SERVICEOUTPUT$\n" | <%= @mail_command %> -s "** $NOTIFICATIONTYPE$ Service Alert: $HOSTALIAS$/$SERVICEDESC$ is $SERVICESTATE$ **" $CONTACTEMAIL$
 }
 
 
@@ -138,6 +138,12 @@ define command{
 define command{
         command_name    check_http
         command_line    $USER1$/check_http -I $HOSTADDRESS$ $ARG1$
+        }
+
+# 'check_http_remote' command definition
+define command{
+        command_name    check_http_remote
+        command_line    $USER1$/check_http $ARG1$
         }
 
 # 'check_ssh' command definition
@@ -244,13 +250,8 @@ define command{
 
 
 define  command {
-        command_name    check_nrpe_command
-        command_line    $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$
-}
-
-define  command {
         command_name    check_nrpe_command_args
-        command_line    $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$ -a $ARG2$
+        command_line    $USER1$/check_nrpe -t <%= @nrpe_command_timeout %> -H $HOSTADDRESS$ -c $ARG1$ -a $ARG2$
 }
 
 define command {

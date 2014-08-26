@@ -1,11 +1,8 @@
-# == Class: icinga::plugins::checkload
+# == Class: icinga::plugins::checkcron
 #
-# This class provides a checkload plugin.
+# This class provides a checkcron plugin.
 #
-class icinga::plugins::checkload (
-  $pkgname               = 'nagios-plugins-load',
-  $check_warning         = '15,10,5',
-  $check_critical        = '30,25,20',
+class icinga::plugins::checkcron (
   $contact_groups        = $::environment,
   $max_check_attempts    = $::icinga::max_check_attempts,
   $notification_period   = $::icinga::notification_period,
@@ -13,24 +10,25 @@ class icinga::plugins::checkload (
 ) inherits icinga {
 
   if $icinga::client {
-    if $::osfamily != 'Debian' {
-      package{$pkgname:
-        ensure => 'installed',
-      }
+
+    $cron_proc_name = $::osfamily ? {
+        'Debian'    => 'cron',
+        'RedHat'    => 'crond',
+        default     => 'crond',
     }
 
-    file{"${::icinga::includedir_client}/load.cfg":
+    file{"${::icinga::includedir_client}/cron.cfg":
       ensure  => 'file',
       mode    => '0644',
       owner   => $::icinga::client_user,
       group   => $::icinga::client_group,
-      content => "command[check_load]=${::icinga::plugindir}/check_load -w ${check_warning} -c ${check_critical}\n",
+      content => "command[check_cron]=${::icinga::plugindir}/check_procs -c 1: -C ${cron_proc_name}\n",
       notify  => Service[$::icinga::service_client],
     }
 
-    @@nagios_service{"check_load_${::fqdn}":
-      check_command         => 'check_nrpe_command!check_load',
-      service_description   => 'Server load',
+    @@nagios_service{"check_cron_${::fqdn}":
+      check_command         => 'check_nrpe_command!check_cron',
+      service_description   => 'Cron',
       host_name             => $::fqdn,
       contact_groups        => $contact_groups,
       max_check_attempts    => $max_check_attempts,

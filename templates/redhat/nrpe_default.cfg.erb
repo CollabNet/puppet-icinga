@@ -1,7 +1,0 @@
-#
-## Managed by Puppet
-#
-
-command[check_mem]=<%= scope.lookupvar('icinga::plugindir') %>/check_mem -w 90,25 -c 95,50
-command[check_total_procs]=<%= scope.lookupvar('icinga::plugindir') %>/check_procs -w $ARG1$ -c $ARG2$
-command[check_mysqld]=<%= scope.lookupvar('icinga::plugindir') %>/check_mysqld.pl

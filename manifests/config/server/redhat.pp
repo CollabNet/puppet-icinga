@@ -12,7 +12,6 @@ class icinga::config::server::redhat {
     notify  => [
       Service[$::icinga::service_client],
       Service[$::icinga::service_server],
-      Group[$::icinga::server_cmd_group],
       Exec['fix_collected_permissions']
     ],
   }
@@ -44,10 +43,6 @@ class icinga::config::server::redhat {
     recurse => true,
   }
 
-  file{"${::icinga::targetdir}/commands.cfg":
-    content => template('icinga/redhat/commands.cfg.erb'),
-  }
-
   file{"${::icinga::targetdir}/notifications.cfg":
     content => template('icinga/redhat/notifications.cfg.erb'),
   }
@@ -62,14 +57,6 @@ class icinga::config::server::redhat {
 
   file{"${::icinga::confdir_server}/cgi.cfg":
     content => template('icinga/redhat/cgi.cfg.erb'),
-  }
-
-  file{"${::icinga::targetdir}/generic-host.cfg":
-    content => template('icinga/redhat/generic-host.cfg'),
-  }
-
-  file{"${::icinga::targetdir}/generic-service.cfg":
-    content => template('icinga/redhat/generic-service.cfg'),
   }
 
   file{"${::icinga::confdir_server}/icinga.cfg":
@@ -87,10 +74,6 @@ class icinga::config::server::redhat {
 
   file{"${::icinga::vardir_server}/checkresults":
     ensure => directory,
-  }
-
-  file{"${::icinga::confdir_server}/resource.cfg":
-    content => template('icinga/redhat/resource.cfg.erb'),
   }
 
 }

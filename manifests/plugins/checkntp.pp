@@ -1,3 +1,7 @@
+# == Class: icinga::plugins::checkntp
+#
+# This class provides a check_ntp plugin.
+#
 class icinga::plugins::checkntp (
   $ntp_server            = 'pool.ntp.org',
   $warn_value            = '1',
@@ -8,6 +12,12 @@ class icinga::plugins::checkntp (
   $notifications_enabled = $::icinga::notifications_enabled,
 ) inherits ::icinga {
 
+  if is_array($ntp_server) {
+    $_ntp_server = $ntp_server[0]
+  } else {
+    $_ntp_server = $ntp_server
+  }
+
   require ::ntp
 
   file{"${::icinga::includedir_client}/ntp.cfg":
@@ -15,7 +25,7 @@ class icinga::plugins::checkntp (
     mode    => '0644',
     owner   => $::icinga::client_user,
     group   => $::icinga::client_group,
-    content => "command[check_ntp]=${::icinga::usrlib}/nagios/plugins/check_ntp -H ${ntp_server} -w ${warn_value} -c ${crit_value}\n",
+    content => "command[check_ntp]=${::icinga::usrlib}/nagios/plugins/check_ntp -H ${_ntp_server} -w ${warn_value} -c ${crit_value}\n",
     notify  => Service[$::icinga::service_client],
   }
 

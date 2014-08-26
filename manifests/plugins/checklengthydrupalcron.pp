@@ -33,13 +33,13 @@ define icinga::plugins::checklengthydrupalcron (
       mode    => '0644',
       owner   => $::icinga::client_user,
       group   => $::icinga::client_group,
-      content => "command[check_lengthy_drupal_cron_${host_name}]=${::icinga::plugindir}/check_procs -m ELAPSED -a /cron.php -w ${warning} -c ${critical}\n",
+      content => "command[check_lengthy_drupal_cron_${host_name}]=${::icinga::plugindir}/check_procs -m ELAPSED --ereg-argument-array='(\/cron.php|drush cron)' -w ${warning} -c ${critical}\n",
       notify  => Service[$::icinga::service_client],
     }
 
     @@nagios_service{"check_lengthy_drupal_cron_${host_name}_${host_name}":
       check_command         => "check_nrpe_command!check_lengthy_drupal_cron_${host_name}",
-      service_description   => "Check Long Running Drupal Cron ${host_name}",
+      service_description   => 'Long Running Drupal Cron',
       host_name             => $host_name,
       use                   => 'generic-service',
       contact_groups        => $contact_groups,

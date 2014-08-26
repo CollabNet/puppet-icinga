@@ -11,13 +11,7 @@ class icinga::config::server::debian {
     notify  => [
       Service[$::icinga::service_client],
       Service[$::icinga::service_server],
-      Group[$::icinga::server_cmd_group]
     ],
-  }
-
-  nagios_command{'check_nrpe_command':
-    command_line => '$USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$',
-    target       => "${::icinga::targetdir}/commands/check_nrpe_command.cfg",
   }
 
   file{$::icinga::icinga_vhost:
@@ -31,10 +25,6 @@ class icinga::config::server::debian {
 
   file{"${::icinga::confdir_server}/cgi.cfg":
     content => template('icinga/debian/cgi.cfg'),
-  }
-
-  file{"${::icinga::confdir_server}/objects/generic-host_icinga.cfg":
-    content => template('icinga/debian/objects/generic-host_icinga.cfg'),
   }
 
 }
