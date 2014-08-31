@@ -7,6 +7,8 @@ class icinga::plugins::checkpuppet (
   $max_check_attempts    = $::icinga::max_check_attempts,
   $notification_period   = $::icinga::notification_period,
   $notifications_enabled = $::icinga::notifications_enabled,
+  $warning_level         = $::icinga::params::checkpuppet_warning_level,
+  $critical_level        = $::icinga::params::checkpuppet_critical_level,
 ) inherits icinga {
 
   if $icinga::client {
@@ -26,7 +28,7 @@ class icinga::plugins::checkpuppet (
       mode    => '0644',
       owner   => $::icinga::client_user,
       group   => $::icinga::client_group,
-      content => "command[check_puppet]=${::icinga::plugindir}/check_puppet -w 604800 -c 907200\n",
+      content => "command[check_puppet]=${::icinga::plugindir}/check_puppet -w ${warning_level} -c ${critical_level}\n",
       notify  => Service[$::icinga::service_client],
     }
 
