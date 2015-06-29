@@ -88,6 +88,11 @@ class icinga::config::server::common {
     content => template('icinga/common/generic-service.cfg'),
   }
 
+  file{"${::icinga::targetdir}/generic-contact.cfg":
+    ensure  => file,
+    content => template('icinga/common/generic-contact.cfg.erb'),
+  }
+
   file{"${::icinga::sharedir_server}/images/logos":}
 
   file{"${::icinga::sharedir_server}/images/logos/os":
@@ -101,12 +106,12 @@ class icinga::config::server::common {
   }
 
   nagios_command {'schedule_script':
-    command_line  => "${::icinga::sharedir_server}/bin/sched_down.pl -c ${::icinga::confdir_server}/icinga.cfg -s ${::icinga::confdir_server}/downtime.cfg \$ARG1\$",
-    target        => "${::icinga::targetdir}/commands/schedule_script.cfg",
+    command_line => "${::icinga::sharedir_server}/bin/sched_down.pl -c ${::icinga::confdir_server}/icinga.cfg -s ${::icinga::confdir_server}/downtime.cfg \$ARG1\$",
+    target       => "${::icinga::targetdir}/commands/schedule_script.cfg",
   }
 
   nagios_command{'check_nrpe_command':
-    command_line => "\$USER1\$/check_nrpe -t ${::icinga::nrpe_connect_timeout} -H \$HOSTADDRESS\$ -c \$ARG1\$",
+    command_line => "\$USER1\$/check_nrpe -u -t ${::icinga::nrpe_connect_timeout} -H \$HOSTADDRESS\$ -c \$ARG1\$",
     target       => "${::icinga::targetdir}/commands/check_nrpe_command.cfg",
   }
 

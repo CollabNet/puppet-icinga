@@ -6,6 +6,7 @@ class icinga::plugins::checkntp (
   $ntp_server            = 'pool.ntp.org',
   $warn_value            = '1',
   $crit_value            = '10',
+  $timeout               = '30',
   $contact_groups        = $::environment,
   $max_check_attempts    = $::icinga::max_check_attempts,
   $notification_period   = $::icinga::notification_period,
@@ -25,12 +26,12 @@ class icinga::plugins::checkntp (
     mode    => '0644',
     owner   => $::icinga::client_user,
     group   => $::icinga::client_group,
-    content => "command[check_ntp]=${::icinga::usrlib}/nagios/plugins/check_ntp -H ${_ntp_server} -w ${warn_value} -c ${crit_value}\n",
+    content => "command[check_ntp_time]=${::icinga::usrlib}/nagios/plugins/check_ntp_time -q -H ${_ntp_server} -w ${warn_value} -c ${crit_value} -t ${timeout}\n",
     notify  => Service[$::icinga::service_client],
   }
 
-  @@nagios_service{"check_ntp_${::fqdn}":
-    check_command         => 'check_nrpe_command!check_ntp',
+  @@nagios_service{"check_ntp_time_${::fqdn}":
+    check_command         => 'check_nrpe_command!check_ntp_time',
     service_description   => 'NTP Time Drift',
     host_name             => $::fqdn,
     contact_groups        => $contact_groups,

@@ -83,6 +83,7 @@ class icinga (
   $nrpe_connect_timeout                      = $::icinga::params::nrpe_connect_timeout,
   $nrpe_server_address                       = $::icinga::params::nrpe_server_address,
   $nrpe_server_port                          = $::icinga::params::nrpe_server_port,
+  $nrpe_command_prefix                       = $::icinga::params::nrpe_command_prefix,
   $nrpe_allow_arguments                      = $::icinga::params::nrpe_allow_arguments,
   $nrpe_enable_debug                         = $::icinga::params::nrpe_enable_debug,
   $pidfile_client                            = $::icinga::params::pidfile_client,
@@ -94,6 +95,7 @@ class icinga (
   $plugindir                                 = $::icinga::params::plugindir,
   $plugins                                   = $::icinga::params::plugins,
   $use_ido                                   = $::icinga::params::use_ido,
+  $use_flapjackfeeder                        = $::icinga::params::use_flapjackfeeder,
   $server                                    = $::icinga::params::server,
   $server_cmd_group                          = $::icinga::params::server_cmd_group,
   $server_group                              = $::icinga::params::server_group,
@@ -128,6 +130,11 @@ class icinga (
   $service_perfdata_file_template            = $::icinga::params::service_perfdata_file_template,
   $service_perfdata_file_processing_interval = $::icinga::params::service_perfdata_file_processing_interval,
 ) inherits icinga::params {
+
+  # Some safety nets
+  if $server == true and $::operatingsystem == 'SLES' {
+    fail("${::operatingsystem} is not supported as a server platform for the moment")
+  }
 
   # motd::register { 'icinga-refactor': }
 

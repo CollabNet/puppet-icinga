@@ -9,6 +9,7 @@ class icinga::plugins::checkmysqld (
   $max_check_attempts    = $::icinga::max_check_attempts,
   $notification_period   = $::icinga::notification_period,
   $notifications_enabled = $::icinga::notifications_enabled,
+  $mgmt_cnf              = '/root/.my.cnf',
 ) inherits icinga {
 
   $pkg_nagios_plugins_mysqld = $::operatingsystem ? {
@@ -40,7 +41,7 @@ class icinga::plugins::checkmysqld (
     owner   => $::icinga::client_user,
     group   => $::icinga::client_group,
     notify  => Service[$::icinga::service_client],
-    content => "command[check_mysqld]=${::icinga::plugindir}/check_mysqld.pl",
+    content => "command[check_mysqld]=sudo ${::icinga::plugindir}/check_mysqld.pl -F ${mgmt_cnf}",
   }
 
   @@nagios_service { "check_mysqld_performance_${::fqdn}":
@@ -51,6 +52,12 @@ class icinga::plugins::checkmysqld (
     target              => "${::icinga::targetdir}/services/${::fqdn}.cfg",
     action_url          => '/pnp4nagios/graph?host=$HOSTNAME$&srv=$SERVICEDESC$',
   }
+
+  sudo::conf{'nagios_mysqld_conf':
+  content => "Defaults:nagios !requiretty
+  nagios ALL=(ALL) NOPASSWD:${::icinga::plugindir}/check_mysqld.pl\n",
+  }
+
 
   if $perfdata {
     file {
