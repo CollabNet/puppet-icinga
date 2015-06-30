@@ -47,8 +47,6 @@ class icinga::collect {
       icon_image            => "os/${::operatingsystem}.png",
       statusmap_image       => "os/${::operatingsystem}.png",
       target                => "${::icinga::targetdir}/hosts/host-${::fqdn}.cfg",
-      owner                 => $::icinga::server_user,
-      group                 => $::icinga::server_group,
     }
   }
 }
